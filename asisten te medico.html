@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Médico</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #cce6ff;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .menu-button {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 10px auto;
+            padding: 12px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .menu-button:hover {
+            background-color: #357abd;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #e6f2ff;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .modal-body {
+            padding: 10px 0;
+            margin-bottom: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .modal-footer {
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .close-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .close-button:hover {
+            background-color: #357abd;
+        }
+        
+        .advice {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #4a90e2;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .advice strong {
+            color: #4a90e2;
+        }
+        
+        .input-modal {
+            background-color: #e6f2ff;
+        }
+        
+        .input-content {
+            padding: 20px;
+        }
+        
+        .input-content label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .input-content input, .input-content select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .submit-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .submit-button:hover {
+            background-color: #357abd;
+        }
+        
+        /* Colores específicos para cada modal */
+        #evaluationModal .modal-content {
+            background-color: #e6f2ff;
+        }
+        
+        #instructionsModal .modal-content {
+            background-color: #d0e7f9;
+        }
+        
+        #careModal .modal-content {
+            background-color: #b3d9ff;
+        }
+        
+        #recommendationsModal .modal-content {
+            background-color: #a0c4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ASISTENTE MÉDICO</h1>
+            <p>Curación de heridas y cuidados del paciente</p>
+        </div>
+        
+        <button class="menu-button" onclick="openEvaluationInput()">1. Evaluar paciente</button>
+        <button class="menu-button" onclick="openModal('instructionsModal')">2. Instrucciones para curación de heridas</button>
+        <button class="menu-button" onclick="openModal('careModal')">3. Cuidados generales del paciente</button>
+        <button class="menu-button" onclick="openRecommendationsInput()">4. Recomendaciones personalizadas</button>
+        <button class="menu-button" onclick="window.close()">5. Salir</button>
+    </div>
+    
+    <!-- Modal para Evaluación del Paciente -->
+    <div id="evaluationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Evaluación del Paciente</h2>
+            </div>
+            <div class="modal-body" id="evaluationContent">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="advice" id="evaluationAdvice">
+                <!-- Consejo dinámico -->
+            </div>
+            <div class="modal-footer">
+                <button class="close-button" onclick="closeModal('evaluationModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Instrucciones de Curación -->
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Instrucciones para Curación</h2>
+            </div>
+            <div class="modal-body">
+                <p>1. Lavado de manos y uso de guantes estériles.</p>
+                <p>2. Limpieza con solución salina (no usar alcohol o yodo).</p>
+                <p>3. Secado suave con gasa estéril sin fricción.</p>
+                <p>4. Aplicación del apósito más adecuado.</p>
+                <p>5. Fijar el vendaje sin comprimir.</p>
+                <p>6. Cambiar cada 24-48 horas o si se ensucia.</p>
+                <p>7. Observar signos de infección (pus, enrojecimiento, fiebre).</p>
+            </div>
+            <div class="advice">
+                <strong>💡 Consejo:</strong> Evita cubrir la herida demasiado apretada. Deja que respire si el médico lo permite.
+            </div>
+            <div class="modal-footer">
+                <button class="close-button" onclick="closeModal('instructionsModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Cuidados Generales -->
+    <div id="careModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Cuidados Generales del Paciente</h2>
+            </div>
+            <div class="modal-body">
+                <p>- Hidratación adecuada y dieta equilibrada.</p>
+                <p>- Higiene personal diaria del paciente.</p>
+                <p>- Revisión frecuente de la herida.</p>
+                <p>- Cambios de posición cada 2 horas (si está encamado).</p>
+                <p>- Estimulación emocional: hablar, música, compañía.</p>
+                <p>- Control estricto de enfermedades como diabetes o hipertensión.</p>
+            </div>
+            <div class="advice">
+                <strong>💡 Consejo:</strong> La salud emocional es tan importante como la física. La soledad puede ralentizar la recuperación.
+            </div>
+            <div class="modal-footer">
+                <button class="close-button" onclick="closeModal('careModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Recomendaciones Personalizadas -->
+    <div id="recommendationsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Recomendaciones Personalizadas</h2>
+            </div>
+            <div class="modal-body" id="recommendationsContent">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="advice" id="recommendationsAdvice">
+                <!-- Consejo dinámico -->
+            </div>
+            <div class="modal-footer">
+                <button class="close-button" onclick="closeModal('recommendationsModal')">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de entrada para Evaluación -->
+    <div id="evaluationInputModal" class="modal input-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Evaluar Paciente</h2>
+            </div>
+            <div class="input-content">
+                <label for="patientAge">Ingrese la edad del paciente:</label>
+                <input type="number" id="patientAge" min="0">
+                
+                <label for="woundType">Seleccione el tipo de herida:</label>
+                <select id="woundType">
+                    <option value="1">Herida aguda</option>
+                    <option value="2">Herida crónica</option>
+                    <option value="3">Herida infectada</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="submit-button" onclick="evaluatePatient()">Evaluar</button>
+                <button class="close-button" onclick="closeModal('evaluationInputModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de entrada para Recomendaciones -->
+    <div id="recommendationsInputModal" class="modal input-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Recomendaciones Personalizadas</h2>
+            </div>
+            <div class="input-content">
+                <label for="recAge">Ingrese la edad del paciente para recomendaciones:</label>
+                <input type="number" id="recAge" min="0">
+                
+                <label for="condition">¿Tiene condición especial?</label>
+                <select id="condition">
+                    <option value="diabetes">Diabetes</option>
+                    <option value="inmovilidad">Inmovilidad</option>
+                    <option value="ninguna">Ninguna</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="submit-button" onclick="generateRecommendations()">Generar Recomendaciones</button>
+                <button class="close-button" onclick="closeModal('recommendationsInputModal')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function openEvaluationInput() {
+            document.getElementById('evaluationInputModal').style.display = 'block';
+        }
+        
+        function openRecommendationsInput() {
+            document.getElementById('recommendationsInputModal').style.display = 'block';
+        }
+        
+        function evaluatePatient() {
+            const age = parseInt(document.getElementById('patientAge').value);
+            const woundType = document.getElementById('woundType').value;
+            
+            if (isNaN(age) {
+                alert("Por favor ingrese una edad válida.");
+                return;
+            }
+            
+            let message = "";
+            let advice = "";
+            
+            // Evaluación por edad
+            if (age <= 12) {
+                message += "👶 Niño:<br>- Supervisión constante de higiene.<br>- Control de vacunas al día.<br>- Dieta rica en calcio.<br>";
+                advice = "Mantén al niño entretenido con juegos mientras limpias heridas para reducir el miedo.";
+            } else if (age <= 17) {
+                message += "🧒 Adolescente:<br>- Educación sobre higiene personal.<br>- Apoyo emocional y alimentación balanceada.<br>";
+                advice = "Fomenta su independencia, pero supervisa si no hay mejora en la herida.";
+            } else if (age <= 59) {
+                message += "🧑 Adulto:<br>- Evaluar entorno laboral y hábitos saludables.<br>- Control de enfermedades crónicas.<br>";
+                advice = "Una herida mal tratada en adultos puede complicarse por estrés o enfermedades no controladas.";
+            } else {
+                message += "👴 Adulto mayor:<br>- Revisar piel frecuentemente.<br>- Hidratación constante.<br>- Prevención de caídas.<br>";
+                advice = "La piel de los adultos mayores es frágil, evita el uso de esparadrapos agresivos.";
+            }
+            
+            // Evaluación por tipo de herida
+            if (woundType === "1") {
+                message += "<br>✅ Herida Aguda: Limpieza con solución salina y apósito estéril.";
+            } else if (woundType === "2") {
+                message += "<br>⚠️ Herida Crónica: Evaluación médica, apósitos especiales y seguimiento.";
+            } else if (woundType === "3") {
+                message += "<br>🚨 Herida Infectada: Presencia de pus, mal olor o fiebre. Puede requerir antibióticos.";
+            }
+            
+            document.getElementById('evaluationContent').innerHTML = message;
+            document.getElementById('evaluationAdvice').innerHTML = `<strong>💡 Consejo:</strong> ${advice}`;
+            
+            closeModal('evaluationInputModal');
+            openModal('evaluationModal');
+        }
+        
+        function generateRecommendations() {
+            const age = parseInt(document.getElementById('recAge').value);
+            const condition = document.getElementById('condition').value;
+            
+            if (isNaN(age)) {
+                alert("Por favor ingrese una edad válida.");
+                return;
+            }
+            
+            let content = "📌 Recomendaciones:<br>";
+            let advice = "";
+            
+            if (age >= 60) {
+                content += "- Revisar piel todos los días.<br>- Usar colchón antiescaras si está encamado.<br>";
+                advice += "En adultos mayores, la vigilancia temprana previene complicaciones graves.<br>";
+            }
+            
+            if (condition === "diabetes") {
+                content += "- Control estricto de glucosa.<br>- Revisar pies y heridas a diario.<br>";
+                advice += "La diabetes puede dificultar la curación. Vigilar infecciones es esencial.<br>";
+            } else if (condition === "inmovilidad") {
+                content += "- Cambiar de posición frecuentemente.<br>- Usar superficies especiales.<br>";
+                advice += "Las úlceras por presión se desarrollan rápido. Cambiar de postura ayuda a evitarlas.<br>";
+            } else {
+                content += "- Mantener una atención regular y observar cambios.<br>";
+                advice += "Un seguimiento diario básico puede detectar signos de alerta a tiempo.";
+            }
+            
+            document.getElementById('recommendationsContent').innerHTML = content;
+            document.getElementById('recommendationsAdvice').innerHTML = `<strong>💡 Consejo:</strong> ${advice}`;
+            
+            closeModal('recommendationsInputModal');
+            openModal('recommendationsModal');
+        }
+        
+        // Cerrar modales al hacer clic fuera del contenido
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let i = 0; i < modals.length; i++) {
+                if (event.target == modals[i]) {
+                    modals[i].style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
